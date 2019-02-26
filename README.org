@@ -14,7 +14,3 @@ It works by taking a =text/template= formatted file and a JSON file and writes t
 - options :: The optional flags which allow you to specify options for input and output.
 - template-file :: A =text/template= formatted file
 - data-file :: A JSON key-map formatted file.
-
-#+BEGINS_SRC shell
-tpl
-#+END_SRC
