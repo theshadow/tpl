@@ -1,0 +1,20 @@
+#+TITLE: TPL the smallest template engine I could write
+* Introduction
+
+Why tpl at all? It sounded like fun and I wanted a general purpose template tool that I could use in code generation.
+Following the unix principal of a small tool that does one thing and one thing well I started this project. Since I've
+really taken a like to the Go programming language I felt it made sense to use their built in =text/template= library.
+
+It works by taking a =text/template= formatted file and a JSON file and writes the combined output to =os.Stdout=
+
+* Usage
+
+=tpl [options] template-file data-file=
+
+- options :: The optional flags which allow you to specify options for input and output.
+- template-file :: A =text/template= formatted file
+- data-file :: A JSON key-map formatted file.
+
+#+BEGINS_SRC shell
+tpl
+#+END_SRC
