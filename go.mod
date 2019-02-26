@@ -1,1 +1,1 @@
-module tpl
+module github.com/theshadow/tpl
