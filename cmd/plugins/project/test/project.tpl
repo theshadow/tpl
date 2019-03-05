@@ -1,0 +1,1 @@
+{{ project_create_file "template_name" "path/to/dest/file-name.ext" . }}

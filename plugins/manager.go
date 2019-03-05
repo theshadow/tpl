@@ -8,26 +8,32 @@ import (
 const (
 	SDKVersion = "1.0.0"
 
-	PluginConstSDKVersion = "PluginSDKVersion"
+	PluginConstSDKVersion = "SDKVersion"
 	PluginConstName = "Name"
 	PluginConstVersion = "Version"
 	PluginConstConstructor = "New"
 )
 
-type ConstructorFn func() Plugin
-
 type Manager struct {
-	plugins map[string]Plugin
-	versions map[string]string
+	Plugins  map[string]Plugin
+	Versions map[string]string
 }
 
-func (m Manager) Load(paths ...string) error {
+func New() *Manager {
+	return &Manager{
+		Plugins:  make(map[string]Plugin),
+		Versions: make(map[string]string),
+	}
+}
+
+func (m *Manager) Load(paths ...string) error {
 	for _, path := range paths {
 		p, err := loadPlugin(path)
 		if err != nil {
-			return fmt.Errorf("unable to load plugin '%s' from '%s': %s", p.Name(), path, err)
+			return fmt.Errorf("unable to load plugin from '%s': %s", path, err)
 		}
-		m.plugins[p.Name()] = p
+		m.Plugins[p.Name()] = p
+		m.Versions[p.Name()] = p.Version()
 	}
 	return nil
 }
@@ -35,12 +41,12 @@ func (m Manager) Load(paths ...string) error {
 func loadPlugin(path string) (Plugin, error) {
 	pn, err := plugin.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to load plugin")
+		return nil, fmt.Errorf("unable to load plugin %s", err)
 	}
 
 	s, err := pn.Lookup(PluginConstSDKVersion)
 	if err != nil {
-		return nil, fmt.Errorf("unable to lookup plugin %s", PluginConstSDKVersion)
+		return nil, fmt.Errorf("unable to lookup plugin var '%s' because %s", PluginConstSDKVersion, err)
 	}
 	if *s.(*string) != SDKVersion {
 		return nil, fmt.Errorf("incompatible SDK version %s, expected %s", *s.(*string), SDKVersion)
@@ -48,7 +54,7 @@ func loadPlugin(path string) (Plugin, error) {
 
 	s, err = pn.Lookup(PluginConstName)
 	if err != nil {
-		return nil, fmt.Errorf("unable to lookup plugin %s", PluginConstName)
+		return nil, fmt.Errorf("unable to lookup plugin var '%s' %s", PluginConstName, err)
 	}
 
 	name := *s.(*string)
@@ -58,7 +64,7 @@ func loadPlugin(path string) (Plugin, error) {
 
 	s, err = pn.Lookup(PluginConstVersion)
 	if err != nil {
-		return nil, fmt.Errorf("unable to lookup plugin %s", PluginConstVersion)
+		return nil, fmt.Errorf("unable to lookup plugin %s: %s", PluginConstVersion, err)
 	}
 
 	version := *s.(*string)
@@ -68,10 +74,10 @@ func loadPlugin(path string) (Plugin, error) {
 
 	s, err = pn.Lookup(PluginConstConstructor)
 	if err != nil {
-		return nil, fmt.Errorf("unable to lookup plugin constructor %s", PluginConstConstructor)
+		return nil, fmt.Errorf("unable to lookup plugin constructor %s: %s", PluginConstConstructor, err)
 	}
 
-	p := s.(ConstructorFn)()
+	p := s.(func() Plugin)()
 	return p, nil
 }
 

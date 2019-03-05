@@ -1,4 +1,4 @@
-module github.com/theshadow/cmd/plugins/example
+module github.com/theshadow/cmd/plugins/project
 
 go 1.12
 

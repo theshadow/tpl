@@ -1,11 +1,11 @@
-package plugins
+package main
 
 import (
 	"fmt"
 	"github.com/theshadow/tpl/plugins"
 )
 
-const (
+var (
 	// Name is the name of the plugin and used to prefix all of the functions.
 	Name = "example"
 	// SDKVersion is the version of the Plugin SDK this plugin is targeting.
